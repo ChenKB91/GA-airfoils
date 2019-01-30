@@ -5,7 +5,7 @@ logging.basicConfig(level=logging.DEBUG,
                     filename ='autosimulate.log',
                     format='%(asctime)s - %(levelname)s : %(message)s')
 current = os.getcwd()
-sys.__stderzr__ = None
+sys.__stderr__ = None
 
 serials = ['0012', '0020', '0030', '0050', 
 		   '2212', '2220', '2230', '2250', 
