@@ -1,0 +1,59 @@
+The code supports four kinds of input
+: 1. bodies
+  2. controls
+
+The following lists what you should provide in input file(s) of each kind of input.
+
+=============================================================
+Kind I: Bodies/Actuators
+for each body.xxx.inp (xxx is the number) in input directory :
+bdy%npts
+    bdy%x(1)    ,    bdy%y(1)
+    bdy%x(2)    ,    bdy%y(2)
+      .                 .
+      .                 .
+      .                 .
+bdy%x(bdy%npts) , bdy%y(bdy%npts)
+
+for each actuator.xxx.inp (xxx is the number) in input directory :
+act%npts
+    act%x(1)    ,    act%y(1)
+    act%x(2)    ,    act%y(2)
+                .
+                .
+                .
+act%x(act%npts) , act%y(act%npts)
+
+=============================================================
+Kind II : Controls
+Current control types that the code supports :
+ 1 : x-component body force in the lab frame
+ 2 : y-component body force in the lab frame
+ 3 : x-component body force in the body-fixed frame
+ 4 : y-component body force in the body-fixed frame
+
+ 5 : x-component actuator velocity in the lab frame
+ 6 : y-component actuator velocity in the lab frame
+ 7 : x-component actuator velocity in the body-fixed frame
+ 8 : y-component actuator velocity in the body-fixed frame
+
+controls input example :
+for each control_input.xxx.inp (xxx is the number) in input directory :
+ctrl(xxx)%type
+(ctrl(xxx) parameters  (if there is one))
+ctrl%ncsteps
+(  ihstart  ,  ctrl%values(ihstart)
+  ihstart+1 , ctrl%values(ihstart+1)
+            .
+            .
+            .
+   ihstop   ,  ctrl%values(ihstop) ) if ctrl%ncsteps =/= 0
+Note : If ctrl%ncsteps = 0, the code will automatically assume ctrl%values(:) = 0
+
+Note : parameters for control(xxx) has different chioces depend on its type
+for control(xxx)%type = 1 ~ 4:
+  ctrl(xxx) parameters = ctrl%xbf, ctrl%ybf, ctrl%width
+for control(xxx)%type = 5 ~ 8 :
+  ctrl(xxx) parameters = ctrl%ibody
+
+=============================================================

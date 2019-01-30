@@ -1,0 +1,17 @@
+ &READ_PARAMETERS
+ ISTART = 0,
+ ISTOP = 1000,
+ ISAVE = 100,
+ DT = 0.005,
+ M = 200,
+ N = 200,
+ LEN = 3,
+ OFFSETX = 1,
+ OFFSETY = 1.5,
+ MGRIDLEV = 5,
+ RE = 100,
+ NCR = 1,
+ OUTPUT_SF = T,
+ COMPUTE_PRESSURE = T,
+ AOA = -5
+/
