@@ -1,7 +1,7 @@
  &READ_PARAMETERS
  ISTART = 0,
  ISTOP = 1000,
- ISAVE = 100,
+ ISAVE = 1000,
  DT = 0.005,
  M = 200,
  N = 200,
@@ -13,5 +13,7 @@
  NCR = 1,
  OUTPUT_SF = T,
  COMPUTE_PRESSURE = T,
- AOA = -5
+ AOA = 10
+ START_N = 1
+ END_N = 50
 /

@@ -53,10 +53,11 @@ MODULE grid
 CONTAINS
 
 ! *****************************************************************************************
-  SUBROUTINE grid_setup_eulerian_grid
+  SUBROUTINE grid_setup_eulerian_grid(n_foil)
 
     IMPLICIT NONE
     INTEGER :: i,j,ns,next
+    INTEGER, INTENT(in) :: n_foil
 
     ! firt order of business is to setup the grid
     delta = len/REAL(m)
@@ -100,27 +101,28 @@ CONTAINS
     IF (next.ne.nq) STOP "ERROR: error in setup_parms - u"
 
     ! now set up a body
-    CALL grid_setup_eulerian_grid_setup_geometry
+    CALL grid_setup_eulerian_grid_setup_geometry(n_foil = n_foil)
 
   END SUBROUTINE grid_setup_eulerian_grid
 
 ! *****************************************************************************************
-  SUBROUTINE grid_setup_eulerian_grid_setup_geometry
+  SUBROUTINE grid_setup_eulerian_grid_setup_geometry(n_foil)
 
     IMPLICIT NONE
     LOGICAL :: readinput
     INTEGER :: i, j, next
+    INTEGER, INTENT(in) :: n_foil
     CHARACTER(3) :: file_num
 
     ! look for bodies in input directory
     readinput = .TRUE.
-    n_body = 0
-    DO WHILE (readinput)
-       WRITE(file_num,"(I3.3)") n_body+1
-       INQUIRE(file="input/body."//file_num//".inp",exist=readinput)
+    n_body = 1
+    ! DO WHILE (readinput)
+       WRITE(file_num,"(I3.3)") n_foil
+       INQUIRE(file="input/ib"//file_num//".inp",exist=readinput)
        IF (readinput) THEN
-          n_body=n_body+1
-          OPEN(unit=8,file="input/body."//file_num//".inp",form='formatted',status='old')
+          ! n_body=n_body+1
+          OPEN(unit=8,file="input/ib"//file_num//".inp",form='formatted',status='old')
           READ(8,*) bdy(n_body)%npts
           !READ(8,*) bdy(n_body)%moving
           ALLOCATE( bdy(n_body)%x(bdy(n_body)%npts), bdy(n_body)%y(bdy(n_body)%npts) )
@@ -128,8 +130,10 @@ CONTAINS
              READ(8,*) bdy(n_body)%x(i), bdy(n_body)%y(i)
           END DO
           CLOSE(8)
+       ELSE
+          STOP 'foil file does not exist'
        END IF
-    END DO
+    ! END DO
 
     ! look for actuators in input directory
     readinput = .TRUE.

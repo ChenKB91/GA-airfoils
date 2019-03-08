@@ -15,6 +15,7 @@ SUBROUTINE write_responses_write_file( dtype_data )
   IMPLICIT NONE
   TYPE(data_t), INTENT(in) :: dtype_data
   TYPE(response_t) :: dtype_resp
+  LOGICAL :: error
   INTEGER :: i, j, it
 
   ! allocate response metrix
@@ -23,7 +24,15 @@ SUBROUTINE write_responses_write_file( dtype_data )
                              ncr = Ncr )
   ! compute responses (for all fwd, bwd, and opt)
   CALL write_responses_compute_response( dtype_data = dtype_data, &
-                                         dtype_resp = dtype_resp )
+                                         dtype_resp = dtype_resp, error = error )
+
+  IF (error.and.(dtype_resp%it.eq.1000)) THEN
+        WRITE(*,*) '-----------------WRITING GEN_FORCE FILE-----------------'
+        OPEN(unit=250,file="output/responds/gen_force.dat",form="formatted",status="unknown",position="append")
+        WRITE(250,*) 0,0
+        CLOSE(250)
+        return
+  END IF
 
   !WRITE(*,*) 'Responses computed ...' ! for debugging
   ! write response only in fwd and bwd, not opt
@@ -57,6 +66,13 @@ SUBROUTINE write_responses_write_file( dtype_data )
         OPEN(unit=150,file="output/responds/simple_force.dat",form="formatted",status="unknown",position="append")
       END IF
 
+      IF (dtype_resp%it.eq.1000) THEN
+        WRITE(*,*) '-----------------WRITING GEN_FORCE FILE-----------------'
+        OPEN(unit=250,file="output/responds/gen_force.dat",form="formatted",status="unknown",position="append")
+        WRITE(250,*) ((dtype_resp%force_lab(i,j), j=1,2), i=1,n_body+n_actuator)
+        CLOSE(250)
+      END IF
+
       WRITE(100,*) dtype_resp%it, dtype_resp%cfl, dtype_resp%slip
 
       IF (Ncr.eq.0) THEN
@@ -72,6 +88,7 @@ SUBROUTINE write_responses_write_file( dtype_data )
                      
         WRITE(150,*) dtype_resp%it, &
                      ((dtype_resp%force_lab(i,j), j=1,2), i=1,n_body+n_actuator)
+
       END IF
 
       IF (Ncr.eq.0) THEN
@@ -116,7 +133,7 @@ SUBROUTINE write_responses_write_file( dtype_data )
 END SUBROUTINE write_responses_write_file
 
 ! *****************************************************************************************
-  SUBROUTINE write_responses_compute_response( dtype_data,dtype_resp )
+  SUBROUTINE write_responses_compute_response( dtype_data,dtype_resp, error)
     !*****************************************************************!
     !*   write immersed body forces to file                          *!
     !*****************************************************************!
@@ -124,6 +141,7 @@ END SUBROUTINE write_responses_write_file
     IMPLICIT NONE
     TYPE(data_t), INTENT(in) :: dtype_data
     TYPE(response_t), INTENT(inout) :: dtype_resp
+    LOGICAL, INTENT(out) :: error
     INTEGER          :: i, j, k
     REAL(KIND(0.D0)), ALLOCATABLE :: xb(:), vb(:), fb(:)
     REAL(KIND(0.D0)), ALLOCATABLE :: rox(:), roy(:), rot_ang(:), rot_rate(:)
@@ -150,9 +168,12 @@ END SUBROUTINE write_responses_write_file
        END DO
     END DO
     dtype_resp%cfl = MAXVAL(vavg)*dt/delta
+    error = .FALSE.
     IF(abs(dtype_resp%cfl).gt.10**4)THEN
       CFL_FLAG=.TRUE.
-      STOP 'ERROR: CFL is larger than 10^4'
+      error = .TRUE.
+      return
+      ! STOP 'ERROR: CFL is larger than 10^4'
     ENDIF
 
     IF ((n_body+n_actuator).ne.0) THEN

@@ -1,0 +1,14 @@
+GENETIC FOIL: 
+  MATLAB PARSEC:
+    ✔ apply interparc @done (19-02-16 17:20)
+    ✔ research reasonable range for each parameter @done (19-02-16 17:20)
+    ✔ I/O @done (19-02-16 17:20)
+  PYTHON:
+    ☐ I/O
+    ☐ Population Class
+    ☐ foil class
+  MODIFY PROF's FORTRAN:
+    ☐ Loop through 50 ibXX.inp
+    ☐ output format
+  SHELL CONTROLL:
+    ☐ Time condition loop

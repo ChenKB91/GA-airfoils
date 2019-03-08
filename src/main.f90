@@ -10,7 +10,8 @@
  USE write_responses
 
  IMPLICIT NONE
-
+ INTEGER :: nfoil, npointtt
+ CHARACTER(3) :: file_num
  !------------------------------- start of program -----------------------!
  ! read parameters
  CALL parameters_input
@@ -24,11 +25,30 @@
  WRITE(*,*) '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
  WRITE(*,*) ''
 
+ nfoil = start_n -1
+ OPEN(unit=250,file="output/responds/gen_force.dat",form="formatted",status="replace")
+ CLOSE(250)
+ DO WHILE (nfoil .lt. end_n)
+    nfoil = nfoil+1
     WRITE(*,*) '===> Running Forward Simulation'
 
     ! ********* pre-processing before running a simulation (begins) **********
     ! setting up grid
-    CALL grid_setup_eulerian_grid
+    WRITE(file_num,"(I3.3)") nfoil
+    WRITE(*,*) "===>reading ib"//file_num//".inp"
+
+    OPEN(unit=42,file="input/ib"//file_num//".inp",form='formatted',status='old')
+    READ(42,*) npointtt
+    CLOSE(42)
+    IF (npointtt==0) THEN
+        WRITE(*,*) "===> INVALID AIRFOIL-WRITING 0"
+        OPEN(unit=250,file="output/responds/gen_force.dat",form="formatted",status="unknown",position="append")
+        WRITE(250,*) 0, 0
+        CLOSE(250)
+        CYCLE
+    END IF
+
+    CALL grid_setup_eulerian_grid(n_foil = nfoil)
 
     ! setting up controls
     CALL controls_setup_control
@@ -45,7 +65,7 @@
     ! Increment time forward
         var%it  = var%it  + 1
 
-        it_advance_show = 1000
+        it_advance_show = 100
         IF ( MOD(var%it,it_advance_show).eq.0 ) THEN
           WRITE(*,*) "...Advancing to itime =", var%it
         END IF
@@ -67,6 +87,11 @@
           END IF
     END DO
 
+
+    CALL variables_destroy_variables
+    CALL controls_destroy_control
+    CALL grid_destroy_grid
+ END DO
     ! *************** farward simulation (ends) ******************
 
     WRITE(*,*) 'Finish the run. Destorying variables'

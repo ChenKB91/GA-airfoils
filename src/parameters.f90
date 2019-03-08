@@ -54,7 +54,9 @@ MODULE parameters
   REAL(KIND(0.D0)) :: naca_moi_vawt_center
 
   ! angle of attack
-  REAL(KIND(0.0D0)) :: aoa  
+  REAL(KIND(0.0D0)) :: aoa 
+  INTEGER :: start_n
+  INTEGER :: end_n 
 CONTAINS
 
 ! *****************************************************************************************
@@ -67,7 +69,7 @@ CONTAINS
 
     NAMELIST /read_parameters/  istart, istop, isave, dt,                &
                                 m,n,len,offsetx,offsety,mgridlev,        &
-                                Re,ncr,output_sf, compute_pressure, aoa
+                                Re,ncr,output_sf, compute_pressure, aoa, start_n, end_n
     ! read input
     readinput = .TRUE.
     INQUIRE(file='input/ib.inp',exist=readinput)
