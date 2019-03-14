@@ -13,7 +13,7 @@
  NCR = 1,
  OUTPUT_SF = T,
  COMPUTE_PRESSURE = T,
- AOA = 10
+ AOA = 25
  START_N = 1
- END_N = 50
+ END_N = 1
 /

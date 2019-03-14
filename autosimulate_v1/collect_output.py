@@ -47,12 +47,13 @@ forcefile.write(l1[1]+' '+l1[2]+'\n')
 forcefile.close()
 
 brk = False
-if AOA < 25:
-	AOA+=5
-elif AOA == 25:
-	i = serials.index(num)+1
-	AOA = -5
-	if i >= len(serials):
+if AOA < 20:
+	AOA+=0.5
+elif AOA == 20:
+	# i = serials.index(num)+1
+	# AOA = -5
+	# if i >= len(serials):
+	if 1:
 		logging.warning('STOP!!!')
 		brk = True
 		# sys.__stderr__ = "999"

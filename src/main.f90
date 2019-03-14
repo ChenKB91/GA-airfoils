@@ -92,6 +92,7 @@
     CALL controls_destroy_control
     CALL grid_destroy_grid
  END DO
+ print *, char(7)
     ! *************** farward simulation (ends) ******************
 
     WRITE(*,*) 'Finish the run. Destorying variables'
