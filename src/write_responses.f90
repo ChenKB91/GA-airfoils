@@ -5,6 +5,7 @@ MODULE write_responses
   USE grid
 
   IMPLICIT NONE
+  REAL :: now_lift, now_drag
 
 CONTAINS
 ! *****************************************************************************************
@@ -25,6 +26,10 @@ SUBROUTINE write_responses_write_file( dtype_data )
   ! compute responses (for all fwd, bwd, and opt)
   CALL write_responses_compute_response( dtype_data = dtype_data, &
                                          dtype_resp = dtype_resp, error = error )
+
+  ! record current drag & lift
+  now_drag = dtype_resp%force_lab(1,1)
+  now_lift = dtype_resp%force_lab(1,2)
 
   IF (error.and.(dtype_resp%it.eq.1000)) THEN
         WRITE(*,*) '-----------------WRITING GEN_FORCE FILE-----------------'

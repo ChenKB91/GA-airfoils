@@ -11,6 +11,7 @@
 
  IMPLICIT NONE
  INTEGER :: nfoil, npointtt
+ REAL :: prev_lift, prev_drag, variance
  CHARACTER(3) :: file_num
  !------------------------------- start of program -----------------------!
  ! read parameters
@@ -28,6 +29,7 @@
  nfoil = start_n -1
  OPEN(unit=250,file="output/responds/gen_force.dat",form="formatted",status="replace")
  CLOSE(250)
+
  DO WHILE (nfoil .lt. end_n)
     nfoil = nfoil+1
     WRITE(*,*) '===> Running Forward Simulation'
@@ -77,14 +79,39 @@
         !WRITE(*,*) 'Write output responses at icpu =', icpu ! for debugging
         CALL write_responses_write_file( dtype_data = var )
 
-          IF ((mod(var%it,isave).eq.0).or.(var%it.eq.istop)) THEN  ! save every isave time steps
-              CALL variables_write_variables( it = var%it, dtype_data = var )
-              ! Compute the pressure if required
-              IF (compute_pressure) THEN
+        IF ((mod(var%it,isave).eq.0).or.(var%it.eq.istop)) THEN  ! save every isave time steps
+            CALL variables_write_variables( it = var%it, dtype_data = var )
+            ! Compute the pressure if required
+            IF (compute_pressure) THEN
+                CALL ibpm_pressure_calculate_pressure( dtype_data = var )
+                CALL ibpm_pressure_write_pressure( dtype_data = var )
+            END IF
+        END IF
+
+        ! --------------------Debugging-------------------
+        ! WRITE(*,*) "....NOW Drag = ",now_drag
+        ! WRITE(*,*) "....NOW Lift = ",now_lift
+        ! WRITE(*,*) "....PRE Drag = ",prev_drag
+        ! WRITE(*,*) "....PRE Lift = ",prev_lift
+        ! WRITE(*,*) "....Drag Diff = ", ABS((prev_drag/now_drag)-1)
+        ! WRITE(*,*) "....Lift Diff = ", ABS((prev_lift/now_lift)-1)
+        ! WRITE(*,*) ABS((prev_lift/now_lift)-1).lt.threshold*DT
+        ! --------------------Debugging-------------------
+
+        IF (use_threshold) THEN  ! save & stop when force change amount under threshold
+            IF ((ABS((prev_drag/now_drag)-1).lt.threshold*DT).and.(ABS((prev_lift/now_lift)-1).lt.threshold*DT)) THEN
+                CALL variables_write_variables( it = var%it, dtype_data = var )
+                ! Compute the pressure if required
+                IF (compute_pressure) THEN
                     CALL ibpm_pressure_calculate_pressure( dtype_data = var )
                     CALL ibpm_pressure_write_pressure( dtype_data = var )
-              END IF
-          END IF
+                END IF
+                WRITE(*,*) "........................END..............."
+                EXIT
+            END IF
+            prev_drag = now_drag
+            prev_lift = now_lift
+        END IF
     END DO
 
 
@@ -97,9 +124,9 @@
 
     WRITE(*,*) 'Finish the run. Destorying variables'
     ! destory grid, control, constraints, and variables
-    CALL variables_destroy_variables
-    CALL controls_destroy_control
-    CALL grid_destroy_grid
+    ! CALL variables_destroy_variables
+    ! CALL controls_destroy_control
+    ! CALL grid_destroy_grid
 
     WRITE(*,*) 'Variables destoried'
 
