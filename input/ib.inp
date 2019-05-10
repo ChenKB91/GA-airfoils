@@ -1,6 +1,6 @@
  &READ_PARAMETERS
  ISTART = 0,
- ISTOP = 2000,
+ ISTOP = 2500,
  ISAVE = 1000,
  DT = 0.005,
  M = 200,
@@ -13,9 +13,9 @@
  NCR = 1,
  OUTPUT_SF = T,
  COMPUTE_PRESSURE = T,
- AOA = 0,
- START_N = 2,
- END_N = 2,
+ AOA = 5,
+ START_N = 1,
+ END_N = 70,
  use_threshold = T,
  threshold = 0.02,
 /

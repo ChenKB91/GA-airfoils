@@ -1,7 +1,7 @@
 %first  = [2000 4000 6000];
 %second = [200 400 600];
-last_two = [12 20 30 50]; %thin,mid,thicc,too thicc
-first_two = [0000 2200 2400 2600 4200 4400 4600 6200 6400 6600]
+last_two = [15]; %thin,mid,thicc,too thicc
+first_two = [0000];
 % last_two = 12;
 % first_two = 0
 

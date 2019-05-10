@@ -13,7 +13,7 @@ function [foil,self_intersect]=parsecpoints(par)
     
     foil_coef = parsec(par);
     x = linspace(0,1,n);
-    xl = linspace(0,0.99,m);
+    xl = linspace(0.01,1,m);
     upper = foil_coef(1)* x.^(1/2) ...
         +foil_coef(2)* x.^(3/2) ...
         +foil_coef(3)* x.^(5/2) ...
@@ -34,16 +34,19 @@ function [foil,self_intersect]=parsecpoints(par)
 %         plot(x,lower,'b-')
 %         axis equal
 %     end
-    px = [x fliplr(xl)];
+    px = [fliplr(x) xl];
 %     px(end) = [];
-    py = [upper fliplr(lower)];
+    py = [fliplr(upper) lower];
 %     py(end) = [];
     foil.parameters = par;
     foil.x = px; foil.y = py;
     
     self_intersect = 0;
-    for i = 1:100
+    for i = 1:99 % should be 100, but somehow it will fuck up everything
         if py(101+i) > py(101-i)
+            disp(py(101+i))
+            disp(py(101-i))
+            disp(i)
             self_intersect = 1;
         end
     end

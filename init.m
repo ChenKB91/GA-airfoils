@@ -1,11 +1,12 @@
-rng(42)
-min = [0.024793 0.26 0.07 -0.7244 0.26 -0.08 0.4244 0 0 2 -15];
-max = [0.024793 0.34 0.08 -0.4244 0.34 -0.07 0.7244 0 0 18 15];
+rng(1)
+pop = 70;
+min = [0.024793 0.25 0.07 -0.8244 0.26 -0.08 0.4244 -0.05 0.015 8 -60];
+max = [0.024793 0.35 0.08 -0.4244 0.34 -0.07 0.8244 0.05 0.015 12 60];
 par_path = [pwd '/data/para50.txt'];
 log_path = [pwd '/data/log.txt'];
 best_log = [pwd 'best_log.log'];
-newgen = zeros(50,11);
-for i = 1:50
+newgen = zeros(pop,11);
+for i = 1:pop
     child = min + (max-min).*rand(1,11);
     newgen(i,:) = child;
 end
@@ -18,12 +19,16 @@ fclose(p_fid);
 l_fid = fopen(log_path,'w');
 fclose(l_fid);
 
-for i = 1:50
+for i = 1:pop
     disp(i)
     %lastwarn('')
     
     par = newgen(i,:);
+    sprintf('%f %f %f %f %f %f %f %f %f %f %f',par); %debug
     [pts, self_cross] = evenpar(par);
+    
+%     disp(self_cross) %debug
+    
     polyin = polyshape({pts(:,1 )},{pts(:,2)});
     [comx,comy] = centroid(polyin);
     s = num2str(i,' %03d');
@@ -35,6 +40,7 @@ for i = 1:50
     
     if self_cross
         % write 0
+        disp('self crossing - write 0')
         fprintf(ib_fid,'%d',0);
     else
         fprintf(ib_fid,'%d\n',n);

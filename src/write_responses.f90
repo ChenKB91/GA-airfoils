@@ -9,14 +9,14 @@ MODULE write_responses
 
 CONTAINS
 ! *****************************************************************************************
-SUBROUTINE write_responses_write_file( dtype_data )
+SUBROUTINE write_responses_write_file( dtype_data, last )
   !***************************************************************!
   !*   write maximum u*dt/dx and slip error                      *!
   !***************************************************************!
   IMPLICIT NONE
   TYPE(data_t), INTENT(in) :: dtype_data
   TYPE(response_t) :: dtype_resp
-  LOGICAL :: error
+  LOGICAL :: error, last
   INTEGER :: i, j, it
 
   ! allocate response metrix
@@ -71,7 +71,7 @@ SUBROUTINE write_responses_write_file( dtype_data )
         OPEN(unit=150,file="output/responds/simple_force.dat",form="formatted",status="unknown",position="append")
       END IF
 
-      IF (dtype_resp%it.eq.1000) THEN
+      IF (last) THEN
         WRITE(*,*) '-----------------WRITING GEN_FORCE FILE-----------------'
         OPEN(unit=250,file="output/responds/gen_force.dat",form="formatted",status="unknown",position="append")
         WRITE(250,*) ((dtype_resp%force_lab(i,j), j=1,2), i=1,n_body+n_actuator)

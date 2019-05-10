@@ -13,6 +13,7 @@
  INTEGER :: nfoil, npointtt
  REAL :: prev_lift, prev_drag, variance
  CHARACTER(3) :: file_num
+ LOGICAL :: threshold_reached
  !------------------------------- start of program -----------------------!
  ! read parameters
  CALL parameters_input
@@ -49,7 +50,7 @@
         CLOSE(250)
         CYCLE
     END IF
-
+    
     CALL grid_setup_eulerian_grid(n_foil = nfoil)
 
     ! setting up controls
@@ -63,8 +64,17 @@
 
     ! *************** farward simulation (begins) ******************
 
-    DO WHILE ( var%it .lt. istop )
+    innerloop: DO WHILE ( var%it .le. istop )
     ! Increment time forward
+        IF (cfl_flag) THEN
+            WRITE(*,*) "===> Force = NaN somehow, writing 0"
+            OPEN(unit=250,file="output/responds/gen_force.dat",form="formatted",status="unknown",position="append")
+            WRITE(250,*) 0, 0
+            CLOSE(250)
+            WRITE(*,*) "---------------------STARTING NEW SIMULATION-------------------------"
+            cfl_flag = .FALSE.
+            exit innerloop
+        END IF
         var%it  = var%it  + 1
 
         it_advance_show = 100
@@ -77,7 +87,7 @@
 
         ! responses are output when in fwd and bwd sim, but not opt
         !WRITE(*,*) 'Write output responses at icpu =', icpu ! for debugging
-        CALL write_responses_write_file( dtype_data = var )
+        CALL write_responses_write_file( dtype_data = var, last = .FALSE. )
 
         IF ((mod(var%it,isave).eq.0).or.(var%it.eq.istop)) THEN  ! save every isave time steps
             CALL variables_write_variables( it = var%it, dtype_data = var )
@@ -99,8 +109,13 @@
         ! --------------------Debugging-------------------
 
         IF (use_threshold) THEN  ! save & stop when force change amount under threshold
-            IF ((ABS((prev_drag/now_drag)-1).lt.threshold*DT).and.(ABS((prev_lift/now_lift)-1).lt.threshold*DT)) THEN
+            threshold_reached = ((ABS((prev_drag/now_drag)-1).lt.threshold*DT).and.(ABS((prev_lift/now_lift)-1).lt.threshold*DT))
+            IF (threshold_reached.or.(var%it.eq.istop)) THEN
+                
+                CALL write_responses_write_file( dtype_data = var, last = .TRUE. )
+
                 CALL variables_write_variables( it = var%it, dtype_data = var )
+
                 ! Compute the pressure if required
                 IF (compute_pressure) THEN
                     CALL ibpm_pressure_calculate_pressure( dtype_data = var )
@@ -112,7 +127,7 @@
             prev_drag = now_drag
             prev_lift = now_lift
         END IF
-    END DO
+    END DO innerloop
 
 
     CALL variables_destroy_variables

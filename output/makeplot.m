@@ -24,8 +24,8 @@ load('RedBlue.mat')
 % -------- General Parameters ---------------------------------------------
 
 % Number of the time step of the file: this identifies which file should be read
-istart = 1000;
-iend = 1000;
+istart = 2000;
+iend = 2000;
 inv = 100;
 %Change colormap
 load('RedBlue.mat');

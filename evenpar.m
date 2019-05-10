@@ -22,8 +22,8 @@ max = [0.023 0.37 0.080 -0.63 0.19 0.05 -0.75  0.1 0 -4.90 15.1];
 % par = [0.015 0.45 0.07 -1.75 0.3 -0.06 0.45 0 0 13.63 32.16];
 % par = [0.0146,0.3025,0.06,-0.4928,0.3016,0.06,-0.4848,-0.1039,0,-2.7791,9.2496];
 [points, self_intersect] = parsecpoints(par);
-
-pt = interparc(100, points.x, points.y, 'csape');
+% disp(self_intersect) %debug
+pt = interparc(101, points.x, points.y, 'spline');
 % pt(100,:) = []
 targetd = 0.015;
 d = pdist([pt(50,:);pt(51,:)]);
@@ -46,7 +46,55 @@ while 1
 %         fprintf(logfile, '  d = %f\n, regen', d);
     end
 end
-%
+
+
+%% Cut pointy tail
+i = 2;
+j = size(newpt,1);
+% disp([i,j])
+leftpair = [0 0];
+% disp(j-i > 1)
+while j-i > 1
+%     disp('hi')
+    p1 = newpt(i,:);
+    p2 = newpt(j,:);
+    d = sqrt((p1(1)-p2(1))^2+(p1(2)-p2(2))^2);
+    if d < 0.015
+         disp(d);
+        leftpair = [i j];
+    end
+    i=i+1;j=j-1;
+end
+% disp(leftpair)
+if leftpair == [0 0]
+    pa = newpt(1,:);
+    pb = newpt(size(newpt,1),:);
+    vec_vert_len = sqrt(0.015^2 - (norm(pa-pb)/2)^2);
+    vec_vert = vec_vert_len * fliplr((pa-pb)/norm(pa-pb)) .* [-1, 1];
+    if pa(2) > pb(2)
+        vec_vert = -vec_vert;
+    end
+    tmppt = (pa+pb)/2 + vec_vert;
+    newpt = [newpt;tmppt];
+else
+    pa = newpt(leftpair(1)+1,:);
+    pb = newpt(leftpair(2)-1,:);
+    vec_vert_len = sqrt(0.015^2 - (norm(pa-pb)/2)^2);
+    vec_vert = vec_vert_len * fliplr((pa-pb)/norm(pa-pb)) .* [-1, 1];
+    if pa(2) > pb(2)
+        vec_vert = -vec_vert;
+    end
+    tmppt = (pa+pb)/2 + vec_vert;
+    
+    newpt(leftpair(2):size(newpt,1), :) = [];
+    newpt(1:leftpair(1),:) = [];
+    newpt = [tmppt;newpt];
+end
+
+
+
+
+%{
 [~,i] = maxk(newpt(:,1), 4);
 p1 = newpt(i(1),:);
 p2 = newpt(i(2),:);
@@ -62,8 +110,7 @@ else
     pa = p3;
     pb = p4;
 end
-
-
+ 
 vec_vert_len = sqrt(0.015^2 - (norm(pa-pb)/2)^2);
 vec_vert = vec_vert_len * fliplr((pa-pb)/norm(pa-pb)) .* [-1, 1];
 if pa(2) > pb(2)
@@ -77,7 +124,8 @@ else
     newpt(i(1),:) = [];
     newpt(i(2),:) = tmppt;
 end
-%}
+
 % plot(newpt(:,1),newpt(:,2),'bo')
 % hold on
 % axis equal
+%}

@@ -91,7 +91,7 @@ SUBROUTINE variables_preprocess
 
   WRITE(*,*) '=> Performing preprocessing ...'
   exist_chol =.FALSE.
-  INQUIRE(file="output/ib.chd",exist = exist_chol)
+  ! INQUIRE(file="output/ib.chd",exist = exist_chol)  ! ignore prev chol
   IF ( exist_chol )THEN
     ! **************** the Cholesky matrix exists (begins) **************
      WRITE(*,*) '=> Cholesky matrix already computed. Checking if we can reuse this matrix'
