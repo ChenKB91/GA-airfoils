@@ -48,20 +48,20 @@ worst_par   = p_data(worst_index,:);
 log_fid = fopen(best_path,'a');
 flog_fid = fopen(best_force_path,'a');
 disp(best_par)
-fprintf(log_fid,'%f %f %f %f %f %f %f %f %f %f %f\n',best_par);
-fprintf(flog_fid,'%f, %f, %f\n',[f_data(best_index,:) f_fitness(best_index)]);
+fprintf(log_fid,'%d %f %f %f %f %f %f %f %f %f %f %f\n',[now_gen best_par]);
+fprintf(flog_fid,'%d, %f, %f, %f\n',[now_gen f_data(best_index,:) f_fitness(best_index)]);
 
 log2_fid = fopen(mid_path,'a');
 flog2_fid = fopen(mid_force_path,'a');
 disp(mid_par)
-fprintf(log2_fid,'%f %f %f %f %f %f %f %f %f %f %f\n',mid_par);
-fprintf(flog2_fid,'%f, %f, %f\n',[f_data(mid_index,:) f_fitness(mid_index)]);
+fprintf(log2_fid,'%d %f %f %f %f %f %f %f %f %f %f %f\n',[now_gen mid_par]);
+fprintf(flog2_fid,'%d, %f, %f, %f\n',[now_gen f_data(mid_index,:) f_fitness(mid_index)]);
 
 log3_fid = fopen(worst_path,'a');
 flog3_fid = fopen(worst_force_path,'a');
 disp(worst_par)
-fprintf(log3_fid,'%f %f %f %f %f %f %f %f %f %f %f\n',worst_par);
-fprintf(flog3_fid,'%f, %f, %f\n',[f_data(worst_index,:) f_fitness(worst_index)]);
+fprintf(log3_fid,'%d %f %f %f %f %f %f %f %f %f %f %f\n',[now_gen worst_par]);
+fprintf(flog3_fid,'%d, %f, %f, %f\n',[now_gen f_data(worst_index,:) f_fitness(worst_index)]);
 %%
 % make pool
 maxfitness = f_fitness(index);
@@ -121,5 +121,5 @@ for i = 1:pop
     fclose(ib_fid);
 end
 
-disp(['Done Processing generation %d' num2str(now_gen)])
+disp(['Done Processing generation ' num2str(now_gen)])
 % exit;

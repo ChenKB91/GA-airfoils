@@ -15,7 +15,7 @@
 # end=$((SECONDS+$tmp))
 read -p "Input Generations to run... ->" gen
 # while [ $SECONDS -lt $end ]; do
-for i in {1..gen}
+for i in $(seq 1 $gen);
 do
     # Do what you want.
     # python move_file.py 0
@@ -23,8 +23,9 @@ do
     make cleandata
     bin/ib
     cp -f output/responds/gen_force.dat data/force.txt
-    /Applications/MATLAB_R2018b.app/bin/matlab -nodesktop -nosplash -r 'gen_foil(i); exit;'
+    /Applications/MATLAB_R2018b.app/bin/matlab -nodesktop -nosplash -r 'gen_foil($i); exit;'
     
+    # echo "gen_foil($i)"
 done
 echo "finishing time $SECONDS seconds"
 
