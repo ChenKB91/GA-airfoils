@@ -23,7 +23,7 @@ do
     make cleandata
     bin/ib
     cp -f output/responds/gen_force.dat data/force.txt
-    /Applications/MATLAB_R2018b.app/bin/matlab -nodesktop -nosplash -r 'gen_foil($i); exit;'
+    /Applications/MATLAB_R2018b.app/bin/matlab -nodesktop -nojvm -nosplash -r "gen_foil; exit;"
     
     # echo "gen_foil($i)"
 done

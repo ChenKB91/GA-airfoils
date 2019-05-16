@@ -1,4 +1,4 @@
-function gen_foil(now_gen)
+function gen_foil
 rng(42)
 pop = 70;
 remain = 30;
@@ -7,6 +7,7 @@ mut_rate = 0.07;
 % 0.024793 0.300000 0.075000 -0.574473 0.300000 -0.075000 0.578907 0.000000 0.000000 9.954040 -5.254758
 min = [0.024793 0.25 0.07 -0.8244 0.26 -0.08 0.4244 -0.05 0.015 8 -60];
 max = [0.024793 0.35 0.08 -0.4244 0.34 -0.07 0.8244 0.05 0.015 12 60];
+
 %% path
 par_path = [pwd '/data/para50.txt'];
 force_path = [pwd '/data/force.txt'];
@@ -18,6 +19,13 @@ worst_path = [pwd '/log/worst.log'];
 best_force_path = [pwd '/log/best_force.log'];
 mid_force_path = [pwd '/log/mid_force.log'];
 worst_force_path = [pwd '/log/worst_force.log'];
+
+%% gen num
+gen_num_file = fopen([pwd '/log/tmp.txt'],'r');
+now_gen = fscanf(gen_num_file,'%d');
+fclose(gen_num_file);
+
+disp(['=====Writing Gen' now_gen '=====']
 
 %% GA
 % read par & force
@@ -35,7 +43,7 @@ f_fitness = f_data(:,2)./f_data(:,1);
 % get best foils index
 [~,sorted_index]  = sort(f_fitness);
 sorted_index = flipud(sorted_index);
-index = sorted_index(1:20);
+index = sorted_index(1:remain);
 
 best_index = index(1);
 mid_index = sorted_index(pop/2);
@@ -62,6 +70,8 @@ flog3_fid = fopen(worst_force_path,'a');
 disp(worst_par)
 fprintf(log3_fid,'%d %f %f %f %f %f %f %f %f %f %f %f\n',[now_gen worst_par]);
 fprintf(flog3_fid,'%d, %f, %f, %f\n',[now_gen f_data(worst_index,:) f_fitness(worst_index)]);
+
+
 %%
 % make pool
 maxfitness = f_fitness(index);
@@ -120,6 +130,9 @@ for i = 1:pop
     end
     fclose(ib_fid);
 end
-
+%% ending
+gen_num_file = fopen([pwd '/log/tmp.txt'],'w');
+fprintf(gen_num_file,'%d',now_gen+1);
+fclose(gen_num_file);
 disp(['Done Processing generation ' num2str(now_gen)])
 % exit;
