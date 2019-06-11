@@ -25,7 +25,7 @@ gen_num_file = fopen([pwd '/log/tmp.txt'],'r');
 now_gen = fscanf(gen_num_file,'%d');
 fclose(gen_num_file);
 
-disp(['=====Writing Gen' now_gen '=====']
+disp(['=== Writing Gen ' now_gen ' ==='])
 
 %% GA
 % read par & force

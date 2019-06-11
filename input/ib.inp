@@ -15,7 +15,7 @@
  COMPUTE_PRESSURE = T,
  AOA = 5,
  START_N = 1,
- END_N = 70,
+ END_N = 1,
  use_threshold = T,
  threshold = 0.02,
 /
