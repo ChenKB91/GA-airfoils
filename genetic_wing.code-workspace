@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"*.mod": true
+		},
+		"material-icon-theme.files.associations": {
+			"*.m": "matlab"
+		}
+	}
+}
