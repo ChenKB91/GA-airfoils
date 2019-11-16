@@ -13,9 +13,9 @@
  NCR = 1,
  OUTPUT_SF = T,
  COMPUTE_PRESSURE = T,
- AOA = 5,
+ AOA = 0,
  START_N = 1,
- END_N = 1,
+ END_N = 70,
  use_threshold = T,
  threshold = 0.02,
 /
